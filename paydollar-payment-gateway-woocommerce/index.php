@@ -446,4 +446,15 @@ function woocommerce_paydollar_init(){
 
 	add_filter('woocommerce_payment_gateways', 'woocommerce_add_paydollar_gateway' );
 	
+	add_action( 'woocommerce_before_thankyou', 'woocommerce_before_thankyou_msp009', 10, 2 );
+	
+	function woocommerce_before_thankyou_msp009( $order_id ) {
+		$order = wc_get_order( $order_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited		
+
+		if( ($order->has_status('completed') == false) && ($order->get_payment_method() == 'paydollar') && (array_key_exists('Ref', $_GET)) && ($_GET['Ref']) ){
+			$order->payment_complete( $_GET['Ref'] );
+		}
+
+	}
+	
 }
